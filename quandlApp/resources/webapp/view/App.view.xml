@@ -1,0 +1,114 @@
+<mvc:View controllerName="quandlApp.controller.App" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true" xmlns="sap.m" xmlns:table="sap.ui.table" xmlns:l="sap.ui.layout">
+	<App>
+		<pages>
+			<Page title="{i18n>title}">
+				<content>
+					<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
+						<headerToolbar>
+							<Toolbar height="3rem">
+								<Title text="Panel with picture"/>
+							</Toolbar>
+						</headerToolbar>
+						<content>
+							<l:HorizontalLayout></l:HorizontalLayout>
+							<Text
+								text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat"/>
+						</content>
+					</Panel>
+					<Panel width="auto" class="sapUiResponsiveMargin">
+						<headerToolbar>
+							<Toolbar height="3rem">
+								<Title text="Product Data Table"/>
+								<ToolbarSpacer/>
+								<Button  text="Soy Data" press="getSoy"/>
+								<Button  text="Corn Data" press="getCorn"/>
+							</Toolbar>
+						</headerToolbar>
+						<content>
+							<table:Table id="cornTable">
+								<table:title>
+									<Text text="SAPUI5 sap.ui.table XML view"></Text>
+								</table:title>
+								<table:columns>
+									<table:Column sortProperty="_PRODUCT" filterProperty="_PRODUCT">
+										<Label text="_PRODUCT"/>
+										<table:template>
+											<Text text="{_PRODUCT}" ></Text>
+										</table:template>
+										</table:Column>
+									<table:Column sortProperty="_DATE" filterProperty="_DATE">
+										<Label text="Date"/>
+										<table:template>
+											<Text text="{_DATE}" ></Text>
+										</table:template>
+									</table:Column>
+									<table:Column sortProperty="_OPEN" filterProperty="_OPEN">
+										<Label text="_OPEN"/>
+										<table:template>
+											<Text text="{_OPEN}"></Text>
+										</table:template>
+									</table:Column>
+									<table:Column sortProperty="_HIGH" filterProperty="_HIGH">
+										<Label text="_HIGH"/>
+										<table:template>
+											<Text text="{_HIGH}"></Text>
+										</table:template>
+									</table:Column>
+									<table:Column sortProperty="_LOW" filterProperty="_LOW">
+										<Label text="_LOW"/>
+										<table:template>
+											<Text text="{_LOW}" ></Text>
+										</table:template>
+									</table:Column>
+									<table:Column sortProperty="_LAST" filterProperty="_LAST">
+										<Label text="_LAST"/>
+										<table:template>
+											<Text text="{_LAST}" ></Text>
+										</table:template>
+									</table:Column>
+									<table:Column sortProperty="_CHANGE" filterProperty="_CHANGE">
+										<Label text="_CHANGE"/>
+										<table:template>
+											<Text text="{_CHANGE}" ></Text>
+										</table:template>
+									</table:Column>
+									<table:Column sortProperty="_SETTLE" filterProperty="_SETTLE">
+										<Label text="_SETTLE"/>
+										<table:template>
+											<Text text="{_SETTLE}" ></Text>
+										</table:template>
+									</table:Column>
+									<table:Column sortProperty="_VOLUME" filterProperty="_VOLUME">
+										<Label text="_VOLUME"/>
+										<table:template>
+											<Text text="{_VOLUME}" ></Text>
+										</table:template>
+									</table:Column>
+									<table:Column sortProperty="_PREVIOS" filterProperty="_PREVIOS">
+										<Label text="_PREVIOS"/>
+										<table:template>
+											<Text text="{_PREVIOS}" ></Text>
+										</table:template>
+									</table:Column>
+								</table:columns>
+							</table:Table>
+						</content>
+					</Panel>
+					<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
+						<headerToolbar>
+							<Toolbar height="3rem">
+								<Title text="CHART"/>
+							</Toolbar>
+						</headerToolbar>
+						<content>
+							<l:HorizontalLayout></l:HorizontalLayout>
+							<Text
+								text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat"/>
+						</content>
+					</Panel>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

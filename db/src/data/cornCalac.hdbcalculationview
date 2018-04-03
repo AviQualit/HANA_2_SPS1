@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="HANA_2_SPS1.db.data::cornCalac" applyPrivilegeType="NONE" dataCategory="DIMENSION" dimensionType="TIME" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="cornCalac"/>
+<localVariables/>
+<variableMappings/>
+<dataSources>
+  <DataSource id="HANA_2_SPS1.db.data::corn">
+    <resourceUri>HANA_2_SPS1.db.data::corn</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews/>
+<logicalModel id="HANA_2_SPS1.db.data::corn">
+  <attributes>
+    <attribute id="_PRODUCT" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="_PRODUCT"/>
+      <keyMapping columnObjectName="corn" columnName="_PRODUCT"/>
+    </attribute>
+    <attribute id="_DATE" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="_DATE"/>
+      <keyMapping columnObjectName="corn" columnName="_DATE"/>
+    </attribute>
+    <attribute id="_OPEN" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="_OPEN"/>
+      <keyMapping columnObjectName="corn" columnName="_OPEN"/>
+    </attribute>
+    <attribute id="_HIGH" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="_HIGH"/>
+      <keyMapping columnObjectName="corn" columnName="_HIGH"/>
+    </attribute>
+    <attribute id="_LOW" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="_LOW"/>
+      <keyMapping columnObjectName="corn" columnName="_LOW"/>
+    </attribute>
+    <attribute id="_LAST" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="_LAST"/>
+      <keyMapping columnObjectName="corn" columnName="_LAST"/>
+    </attribute>
+    <attribute id="_CHANGE" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="_CHANGE"/>
+      <keyMapping columnObjectName="corn" columnName="_CHANGE"/>
+    </attribute>
+    <attribute id="_SETTLE" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="_SETTLE"/>
+      <keyMapping columnObjectName="corn" columnName="_SETTLE"/>
+    </attribute>
+    <attribute id="_VOLUME" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="_VOLUME"/>
+      <keyMapping columnObjectName="corn" columnName="_VOLUME"/>
+    </attribute>
+    <attribute id="_PREVIOS" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="_PREVIOS"/>
+      <keyMapping columnObjectName="corn" columnName="_PREVIOS"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="92" y="112"/>
+    
+      <rectangleSize width="140"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario> 
