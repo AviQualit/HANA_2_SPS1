@@ -1,1 +1,19 @@
 /* Enter your custom styles here */
+
+.quandleAppStyle .myCustomText {
+    font-weight: bold;
+    color: Black;
+    font-size: 2.5em;
+}
+
+.quandleAppStyle .valueLabelPositiveOption {
+    font-weight: bold;
+    color: Green;
+    font-size: 2.5em;
+}
+
+.quandleAppStyle .valueLabelNegativeOption {
+    font-weight: bold;
+    color: Red;
+    font-size: 2.5em;
+}

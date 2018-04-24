@@ -1,112 +1,222 @@
 <mvc:View controllerName="quandlApp.controller.App" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
-	displayBlock="true" xmlns="sap.m" xmlns:table="sap.ui.table" xmlns:l="sap.ui.layout">
-	<App>
+	displayBlock="true" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:table="sap.ui.table" xmlns:lab="it.designfuture.chartjs"
+	xmlns:l="sap.ui.layout">
+	<App class="quandleAppStyle">
 		<pages>
-			<Page title="{i18n>title}">
+			<Page title="{i18n>title}" enableScrolling="false"  class="sapUiResponsiveContentPadding">
 				<content>
-					<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
+					<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region" expandable="true" expanded="true">
 						<headerToolbar>
 							<Toolbar height="3rem">
-								<Title text="Panel with picture"/>
+								<Title text="Settings Panel header toolbar"/>
 							</Toolbar>
 						</headerToolbar>
 						<content>
-							<l:HorizontalLayout></l:HorizontalLayout>
-							<Text
-								text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat"/>
+							<HBox class='settingsHBox'>
+								<l:VerticalLayout class="sapUiContentPadding">
+									<VBox class='settingsBox'>
+										<Label text="Data Set" design="Bold" class='settingsLabel'></Label>
+										<RadioButtonGroup id='datasetRadioGroup' class="radioButtonGroup">
+											<buttons>
+												<RadioButton id="Corn" text="Corn" select="onDatasetSelected">
+													<customData>
+														<core:CustomData key="key" value="Corn"/>
+													</customData>
+												</RadioButton>
+												<RadioButton id="Soy" text="Soy" select="onDatasetSelected">
+													<customData>
+														<core:CustomData key="key" value="Soy"/>
+													</customData>
+												</RadioButton>
+											</buttons>
+										</RadioButtonGroup>
+									</VBox>
+								</l:VerticalLayout>
+								<l:VerticalLayout class="sapUiContentPadding">
+									<VBox class='settingsBox'>
+										<Label text='Key Figure' design="Bold" class='settingsLabel' allign="center"></Label>
+										<RadioButtonGroup id='seriesRadioGroup' class="radioButtonGroup" columns="4">
+											<buttons>
+												<RadioButton id="_LAST" text="Last" select="onKeyFigureSelect">
+													<customData>
+														<core:CustomData key="key" value="_LAST"/>
+													</customData>
+												</RadioButton>
+												<RadioButton id="_OPEN" text="Open" select="onKeyFigureSelect">
+													<customData>
+														<core:CustomData key="key" value="_OPEN"/>
+													</customData>
+												</RadioButton>
+												<RadioButton id="_HIGH" text="High" select="onKeyFigureSelect">
+													<customData>
+														<core:CustomData key="key" value="_HIGH"/>
+													</customData>
+												</RadioButton>
+												<RadioButton id="_LOW" text="Low" select="onKeyFigureSelect">
+													<customData>
+														<core:CustomData key="key" value="_LOW"/>
+													</customData>
+												</RadioButton>
+												<RadioButton id="_CHANGE" text="Change" select="onKeyFigureSelect">
+													<customData>
+														<core:CustomData key="key" value="_CHANGE"/>
+													</customData>
+												</RadioButton>
+												<RadioButton id="_SETTLE" text="Settle" select="onKeyFigureSelect">
+													<customData>
+														<core:CustomData key="key" value="_SETTLE"/>
+													</customData>
+												</RadioButton>
+												<RadioButton id="_VOLUME" text="Volume" select="onKeyFigureSelect">
+													<customData>
+														<core:CustomData key="key" value="_VOLUME"/>
+													</customData>
+												</RadioButton>
+												<RadioButton id="_PREVIOS" text="Previos" select="onKeyFigureSelect">
+													<customData>
+														<core:CustomData key="key" value="_PREVIOS"/>
+													</customData>
+												</RadioButton>
+											</buttons>
+										</RadioButtonGroup>
+									</VBox>
+								</l:VerticalLayout>
+							</HBox>
 						</content>
 					</Panel>
-					<Panel width="auto" class="sapUiResponsiveMargin">
-						<headerToolbar>
-							<Toolbar height="3rem">
-								<Title text="Product Data Table"/>
-								<ToolbarSpacer/>
-								<Button  text="Soy Data" press="getSoy"/>
-								<Button  text="Corn Data" press="getCorn"/>
+					<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
+						<headerToolbar height="3rem">
+							<Toolbar>
+								<Title text="Latest changes"/>
 							</Toolbar>
 						</headerToolbar>
-						<content>
-							<table:Table id="cornTable">
-								<table:title>
-									<Text text="SAPUI5 sap.ui.table XML view"></Text>
-								</table:title>
-								<table:columns>
-									<table:Column sortProperty="_PRODUCT" filterProperty="_PRODUCT">
-										<Label text="_PRODUCT"/>
-										<table:template>
-											<Text text="{_PRODUCT}" ></Text>
-										</table:template>
+						<FlexBox direction="Row" alignItems="Start">
+							<items>
+								<Label id="labelCurrentValue" class="myCustomText" displayOnly="true" wrapping="true" text="currne value ">
+									<layoutData>
+										<FlexItemData growFactor="1"/>
+									</layoutData>
+								</Label>
+								<Label id="changeFromPreviousValue" class="valueLabelPositiveOption" displayOnly="true" wrapping="true" text="changeFromPreviousValue ">
+									<layoutData>
+										<FlexItemData growFactor="1"/>
+									</layoutData>
+								</Label>
+								<Label id="changeFromPreviousPercent" displayOnly="true" wrapping="true" text="changeFromPreviousPercent ">
+									<layoutData>
+										<FlexItemData growFactor="1"/>
+									</layoutData>
+								</Label>
+							</items>
+						</FlexBox>
+					</Panel>
+					<NavContainer id="navCon" width="98%" height="50%" class="navContainerControl sapUiResponsiveMargin">
+						<Page id="p1" showHeader="false">
+							
+							<content>
+								<table:Table id="productTable">
+									<table:columns>
+										<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_PRODUCT" filterProperty="_PRODUCT">
+											<Label text="_PRODUCT"/>
+											<table:template>
+												<Text text="{_PRODUCT}"></Text>
+											</table:template>
 										</table:Column>
-									<table:Column sortProperty="_DATE" filterProperty="_DATE">
-										<Label text="Date"/>
-										<table:template>
-											<Text text="{_DATE}" ></Text>
-										</table:template>
-									</table:Column>
-									<table:Column sortProperty="_OPEN" filterProperty="_OPEN">
-										<Label text="_OPEN"/>
-										<table:template>
-											<Text text="{_OPEN}"></Text>
-										</table:template>
-									</table:Column>
-									<table:Column sortProperty="_HIGH" filterProperty="_HIGH">
-										<Label text="_HIGH"/>
-										<table:template>
-											<Text text="{_HIGH}"></Text>
-										</table:template>
-									</table:Column>
-									<table:Column sortProperty="_LOW" filterProperty="_LOW">
-										<Label text="_LOW"/>
-										<table:template>
-											<Text text="{_LOW}" ></Text>
-										</table:template>
-									</table:Column>
-									<table:Column sortProperty="_LAST" filterProperty="_LAST">
-										<Label text="_LAST"/>
-										<table:template>
-											<Text text="{_LAST}" ></Text>
-										</table:template>
-									</table:Column>
-									<table:Column sortProperty="_CHANGE" filterProperty="_CHANGE">
-										<Label text="_CHANGE"/>
-										<table:template>
-											<Text text="{_CHANGE}" ></Text>
-										</table:template>
-									</table:Column>
-									<table:Column sortProperty="_SETTLE" filterProperty="_SETTLE">
-										<Label text="_SETTLE"/>
-										<table:template>
-											<Text text="{_SETTLE}" ></Text>
-										</table:template>
-									</table:Column>
-									<table:Column sortProperty="_VOLUME" filterProperty="_VOLUME">
-										<Label text="_VOLUME"/>
-										<table:template>
-											<Text text="{_VOLUME}" ></Text>
-										</table:template>
-									</table:Column>
-									<table:Column sortProperty="_PREVIOS" filterProperty="_PREVIOS">
-										<Label text="_PREVIOS"/>
-										<table:template>
-											<Text text="{_PREVIOS}" ></Text>
-										</table:template>
-									</table:Column>
-								</table:columns>
-							</table:Table>
-						</content>
-					</Panel>
-					<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
-						<headerToolbar>
-							<Toolbar height="3rem">
-								<Title text="CHART"/>
-							</Toolbar>
-						</headerToolbar>
-						<content>
-							<l:HorizontalLayout></l:HorizontalLayout>
-							<Text
-								text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat"/>
-						</content>
-					</Panel>
+										<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_DATE" filterProperty="_DATE">
+											<Label text="Date"/>
+											<table:template>
+												<Text text="{_DATE}"></Text>
+											</table:template>
+										</table:Column>
+										<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_OPEN" filterProperty="_OPEN">
+											<Label text="_OPEN"/>
+											<table:template>
+												<Text text="{_OPEN}"></Text>
+											</table:template>
+										</table:Column>
+										<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_HIGH" filterProperty="_HIGH">
+											<Label text="_HIGH"/>
+											<table:template>
+												<Text text="{_HIGH}"></Text>
+											</table:template>
+										</table:Column>
+										<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_LOW" filterProperty="_LOW">
+											<Label text="_LOW"/>
+											<table:template>
+												<Text text="{_LOW}"></Text>
+											</table:template>
+										</table:Column>
+										<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_LAST" filterProperty="_LAST">
+											<Label text="_LAST"/>
+											<table:template>
+												<Text text="{_LAST}"></Text>
+											</table:template>
+										</table:Column>
+										<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_CHANGE" filterProperty="_CHANGE">
+											<Label text="_CHANGE"/>
+											<table:template>
+												<Text text="{_CHANGE}"></Text>
+											</table:template>
+										</table:Column>
+										<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_SETTLE" filterProperty="_SETTLE">
+											<Label text="_SETTLE"/>
+											<table:template>
+												<Text text="{_SETTLE}"></Text>
+											</table:template>
+										</table:Column>
+										<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_VOLUME" filterProperty="_VOLUME">
+											<Label text="_VOLUME"/>
+											<table:template>
+												<Text text="{_VOLUME}"></Text>
+											</table:template>
+										</table:Column>
+										<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_PREVIOS" filterProperty="_PREVIOS">
+											<Label text="_PREVIOS"/>
+											<table:template>
+												<Text text="{_PREVIOS}"></Text>
+											</table:template>
+										</table:Column>
+									</table:columns>
+								</table:Table>
+							</content>
+							<footer>
+								<Toolbar>
+									<Button id="navToChartButton2" text="Display Chart" press="handleNav">
+										<layoutData>
+											<FlexItemData growFactor="1"/>
+										</layoutData>
+										<customData>
+											<core:CustomData key="target" value="p2"/>
+										</customData>
+									</Button>
+								</Toolbar>
+							</footer>
+						</Page>
+						<Page id="p2" showHeader="false" enableScrolling="false" class="sapUiResponsiveContentPadding" >
+							<content>
+								<Panel width="50%" class="sapUiResponsiveMargin sapUiResponsiveContentPadding" accessibleRole="Region">
+								<lab:LineChartJS id="productChart"  autoAdjustHeight="true" datasets="{temp>/lineChart/datasets}" labels="{temp>/lineChart/labels}" titleDisplay="false"
+									titleText="Line Chart Example" onLegendItemClick="onLegendItemClick" onLegendItemHover="onLegendItemHover" onClick="onClick"
+									onHover="onHover" tooltipEnabled="true" onAnimationProgress="onAnimationProgress" onAnimationComplete="onAnimationComplete" showLines="true"
+									spanGaps="true"></lab:LineChartJS>
+								<l:HorizontalLayout></l:HorizontalLayout>
+								</Panel>
+							</content>
+							
+							<footer>
+								<Toolbar >
+									<Button id="navToTableButton" text="Display Table" press="handleNav">
+										<layoutData>
+											<FlexItemData growFactor="1"/>
+										</layoutData>
+										<customData>
+											<core:CustomData key="target" value="p1"/>
+										</customData>
+									</Button>
+								</Toolbar>
+							</footer>
+						</Page>
+					</NavContainer>
 				</content>
 			</Page>
 		</pages>

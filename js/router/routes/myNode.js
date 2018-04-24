@@ -6,41 +6,12 @@ var https = require("https");
 var xsenv = require("@sap/xsenv");
 var moment = require("moment");
 var async = require("async");
+var dataAccess = require("./dataAccess");
 module.exports = function() {
-	var app = express.Router();
-	//Simple Database Select - Async Waterfall
-	app.get("/example2", function(req, res) {
-		var client = req.db;
-	
-		async.waterfall([
-	
-			function prepare(callback) {
-				client.prepare("INSERT INTO \"A\" VALUES(?)",
-					function(err, statement) {
-						callback(null, err, statement);
-					});
-					
-			},
+//	console.log(xsenv.getServices());
 
-			function execute(err, statement, callback) {
-				statement.exec([["222"],["223"],["224"]], function(execErr, results) {
-					callback(null, execErr, results);
-				});
-			},
-			function response(err, results, callback) {
-				if (err) {
-					res.type("text/plain").status(500).send("ERROR: " + err.toString());
-					return;
-				} else {
-					var result = JSON.stringify({
-						Objects: results
-					});
-					res.type("application/json").status(200).send(result);
-				}
-				callback();
-			}
-		]);
-	});
+	var app = express.Router();
+
 	//insert soy
 		//Simple Database Select - Async Waterfall
 	app.get("/insert/soy", function(req, res) {
@@ -219,9 +190,11 @@ request({
 	//Simple Database Select - In-line Callbacks
 //get corn handler
 app.get("/example1", function(req, res) {
+//	console.log(dataAcees.getTopDateFromTable(req.db,"TABLE"));      
+		console.log("example1 start");
 var client = req.db;
 client.prepare(
-	"SELECT * FROM \"HANA2_1\".\"HANA_2_SPS1.db.data::corn\";" ,
+	"SELECT * FROM \"HANA2_1\".\"HANA_2_SPS1.db.data::corn\" ORDER BY \"_DATE\" ASC;" ,
 	function(err, statement) {
 		if (err) {			
 			res.type("text/plain").status(500).send("ERROR: " + err.toString());	return;	}
@@ -232,6 +205,7 @@ client.prepare(
 
 		} else {							
 			var result = JSON.stringify({ Objects: results});					
+			//console.log(result);
 			res.type("application/json").status(200).send(result);
 		}
 		});
@@ -241,7 +215,7 @@ client.prepare(
 app.get("/select/soy", function(req, res) {
 var client = req.db;
 client.prepare(
-	"SELECT * FROM \"HANA2_1\".\"HANA_2_SPS1.db.data::soy\";" ,
+	"SELECT * FROM \"HANA2_1\".\"HANA_2_SPS1.db.data::soy\" ORDER BY \"_DATE\" ASC;" ,
 	function(err, statement) {
 		if (err) {			
 			res.type("text/plain").status(500).send("ERROR: " + err.toString());	return;	}
@@ -257,6 +231,75 @@ client.prepare(
 		});
 	});
 });
+
+
+	app.get("/insert/wheat", function(req, res) {
+		var client = req.db;
+			/*
+			async.waterfall([
+    function(callback) {
+        callback(null, 'one', 'two');
+    },
+    function(arg1, arg2, callback) {
+        // arg1 now equals 'one' and arg2 now equals 'two'
+        callback(null, 'three');
+    },
+    function(arg1, callback) {
+        // arg1 now equals 'three'
+        callback(null, 'done');
+    }
+], function (err, result) {
+    // result now equals 'done'
+});
+			*/
+		async.waterfall([function getMaxDate(callback){
+			 var maxDate = dataAccess.getTopDateFromTable(client,"\"HANA2_1\".\"HANA_2_SPS1.db.data::wheat\";");
+			if(maxDate.hasOwnProperty("error")) {
+				callback(maxDate.error);
+			}
+			else {
+				//if has no date start the date from 2017-01-01
+				var path = "";
+				
+				if (maxDate.maxDate === null){
+					path = "/api/v3/datasets/CHRIS/CME_W1.json?api_key=mGgYFKrrUxPzZhP7euDi&start_date=2017-01-01";
+				}
+				else {
+					
+					var date = maxDate.maxDate; 				
+					path = "/api/v3/datasets/CHRIS/CME_W1.json?api_key=mGgYFKrrUxPzZhP7euDi&start_date="+date;
+				}
+				//else get data from Json
+				callback(null,path);
+			}
+		},
+			function readFromQuandl(path,callback){
+				var quandlData = dataAccess.getDataFromQuandl(path);
+				if (quandlData.hasOwnProperty("error")) {
+				callback(quandlData.error);
+			}
+			///client, product, tblName, valuesArr
+			else {
+				callback(null,client,"wheat","\"HANA2_1\".\"HANA_2_SPS1.db.data::wheat\";", quandlData.data);
+			}
+			},
+			function insertToTable(client, product, tblName, valuesArr,callback) {
+					var insertResult = dataAccess.insertToTable(client, product, tblName, valuesArr);
+						if (insertResult.hasOwnProperty("error")) {
+							res.type("text/plain").status(500).send("ERROR: " + insertResult.error.toString());
+						return;
+						}
+						else{
+							var result = JSON.stringify({
+						Objects: insertResult
+						});
+					res.type("application/json").status(200).send(result);
+				}
+				callback();
+						}
+		]);
+	});
+
 	return app;
 };
 

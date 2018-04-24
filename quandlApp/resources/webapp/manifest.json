@@ -49,6 +49,7 @@
 				"sap.ui.core": {},
 				"sap.m": {},
 				"sap.ui.layout": {},
+				"it.designfuture.chartjs": {},
 				"sap.ushell": {},
 				"sap.collaboration": {},
 				"sap.ui.comp": {},
@@ -71,6 +72,9 @@
 			"css": [{
 				"uri": "css/style.css"
 			}]
-		}
+		},
+		"resourceRoots": {
+            "it.designfuture.chartjs": "./thirdparty/it/designfuture/chartjs/"
+        }
 	}
 }

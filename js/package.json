@@ -4,6 +4,10 @@
     "@sap/xsenv": "1.2.8",
     "express": "~4.15",
     "passport":"~0.3.2",
+    "@sap/logging": "latest",
+    "@sap/xssec": "latest",
+	"@sap/hdbext": "latest",
+    "@sap/jobs-client": "latest",
     "async": "latest"
     
   },

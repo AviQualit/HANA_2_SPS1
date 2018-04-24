@@ -15,5 +15,11 @@
 		"source": "(.*)(.xsodata)",
 		"destination": "core-backend",
 		"authenticationType": "xsuaa"
-  }]
+  },
+  {
+ 		"source": "/jobs(.*)",
+ 		"destination": "core-backend",
+ 		"csrfProtection": true,
+ 		"authenticationType": "xsuaa"
+ 	}]
 }

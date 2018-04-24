@@ -11,7 +11,7 @@ modules:
     type: html5
     path: web
     requires:
-      - name: HANA2-uaa
+      - name: xsaJobsJSuaa
       - name: js_api
         group: destinations
         properties:
@@ -28,12 +28,16 @@ modules:
     requires:
       - name: hdi_db
       - name: db
-      - name: HANA2-uaa
+      - name: xsaJobsJSuaa
+      - name: hdi_db
+      - name: jobScheduler
+    properties:
+      SAP_JWT_TRUST_ACL: '[{"clientid":"*","identityzone":"*"}]'
   - name: quandlApp
     type: html5
     path: quandlApp
     requires:
-      - name: HANA2-uaa
+      - name: xsaJobsJSuaa
       - name: js_api
         group: destinations
         properties:
@@ -52,3 +56,9 @@ resources:
     type: com.sap.xs.uaa-space
     parameters:
       config-path: ./xs-security.json
+  - name: jobScheduler
+    type: com.sap.xs.job-scheduler
+  - name: xsaJobsJSuaa
+    type: com.sap.xs.uaa-space
+    parameters:
+      path: ./xs-security.json
