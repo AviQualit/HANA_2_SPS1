@@ -1,12 +1,14 @@
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/m/MessageToast",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function(jQuery, Controller, JSONModel) {
+], function(jQuery, MessageToast, Controller, JSONModel) {
 	"use strict";
 
 	return Controller.extend("quandlApp.controller.App", {
 		onInit: function() {
+		
 			var view = this.getView();
 			var myController = this;
 			$.ajax({
@@ -27,7 +29,7 @@ sap.ui.define([
 					var lineChartData = {
 						labels: dates,
 						datasets: [{
-							label: "My First dataset",
+							label: "_LAST",
 							fill: false,
 							lineTension: 0.1,
 							backgroundColor: "rgba(75,192,192,0.4)",
@@ -53,14 +55,14 @@ sap.ui.define([
 					view.byId("productChart").setModel(new JSONModel({
 						lineChart: lineChartData
 					}), "temp");
-					myController.setTheLatestDataLabels(myController,null);
+					myController.setTheLatestDataLabels("Corn",myController,view.byId("productChart").getModel("temp").oData.lineChart.datasets[0].label);
 				}
 			});
 		},
-		onDatasetSelected: function(oEvent) {
-			var view = this.getView();
-			var myController = this;
-			var DataSetKey = oEvent.getSource().data("key");
+		onDatasetSelected: function(dataset, controller) {
+			var view = controller.getView();
+			var myController = controller;
+			var DataSetKey = dataset[0];
 			var url = "";
 
 			switch (DataSetKey) {
@@ -82,10 +84,15 @@ sap.ui.define([
 					//bind model to table
 					view.byId("productTable").getModel().setData(data.Objects);
 					view.byId("productTable").getModel().refresh();
-					//bind the model to chart by using key figure select event
-					view.byId("seriesRadioGroup").getSelectedButton().fireSelect();
+					
+					//find current key figure
+					var currKeyFigue = view.byId("productChart").getModel("temp").oData.lineChart.datasets[0].label;
+					//bind the model to chart by using key figure select function
+					myController.onKeyFigureSelect(currKeyFigue,myController);
+					
 					//bind the model to text 
-					myController.setTheLatestDataLabels(myController, null);
+					myController.setTheLatestDataLabels(DataSetKey,myController, currKeyFigue);
+					
 				}
 			});
 		},
@@ -102,11 +109,10 @@ sap.ui.define([
 				}
 			});
 		},
-		onKeyFigureSelect: function(oEvent) {
-			var view = this.getView();
-			var myController = this;
-			var DataSetKey = oEvent.getSource().data("key");
-			var keyFigure = DataSetKey;
+		onKeyFigureSelect: function(keyFigure, controller) {
+			var view = controller.getView();
+			var myController = controller;
+			
 		
 			var lineValues = view.byId("productTable").getModel().oData;
 			var valuesArr = [];
@@ -121,7 +127,7 @@ sap.ui.define([
 					var lineChartData = {
 						labels: dates,
 						datasets: [{
-							label: "My First dataset",
+							label: keyFigure,
 							fill: false,
 							lineTension: 0.1,
 							backgroundColor: "rgba(75,192,192,0.4)",
@@ -150,7 +156,7 @@ sap.ui.define([
 						lineChart: lineChartData
 					}), "temp");
 		view.byId("productChart").getModel("temp").refresh();
-			myController.setTheLatestDataLabels(myController, keyFigure);
+			//myController.setTheLatestDataLabels(myController, keyFigure);
 	//	sap.ui.getCore().byId("productChart").rerender();
 
 		},
@@ -188,16 +194,17 @@ sap.ui.define([
 			});
 			return newArr;
 		},
-		setTheLatestDataLabels: function(myController, newMeasure ){
+		setTheLatestDataLabels: function(dataSetName,myController, newMeasure ){
 			var view = myController.getView();
 			var lineValues = view.byId("productTable").getModel().oData;
 			var sortedvalues  = myController.copyAndSortJsonArray(lineValues);
 			view.byId("labelCurrentValue").setText("new current value");
-			
-			//get the selected measure from radio button group\
+			view.byId("commodityTextId").setText(dataSetName);
+			view.byId("lastDate").setText("Database is up to: "+sortedvalues[0]["_DATE"]);
+			//get the selected measure from chart
 			var selectedMeasure;
 			if (newMeasure === null){
-			 selectedMeasure = view.byId("seriesRadioGroup").getSelectedButton().data("key");
+			 selectedMeasure = view.byId("productChart").getModel("temp").oData.lineChart.datasets[0].label;
 			}
 			 else {
 			 selectedMeasure = newMeasure;
@@ -219,7 +226,7 @@ sap.ui.define([
 			view.byId("changeFromPreviousValue").addStyleClass("valueLabelPositiveOption");
 			}
 			var percent = (difference / previousValue * 100).toFixed(2);
-			view.byId("changeFromPreviousPercent").setText(percent.toString()+"%");
+			view.byId("changeFromPreviousPercent").setText(" ("+percent.toString()+"%)");
 			if (percent < 0){
 			
 			view.byId("changeFromPreviousPercent").removeStyleClass("valueLabelPositiveOption");
@@ -232,7 +239,88 @@ sap.ui.define([
 			}
 		
 			
-		}
+		},
+		onExit : function () {
+			if (this._oDialog) {
+				this._oDialog.destroy();
+			}
+		},
+		handleSelectMeasureDialogPress: function(oEvent){
+		if (this._oDialog) {
+				this._oDialog.destroy();
+				this._oDialog = undefined;
+			}
+			if (!this._oDialog) {
+				this._oDialog = sap.ui.xmlfragment("quandlApp.view.MeasureSelect", this);
+				var measures = [{"id":"_LAST","text":"Last"},{"id":"_OPEN","text":"Open"},{"id":"_HIGH","text":"High"},{"id":"_LOW","text":"Low"},{"id":"_CHANGE","text":"Change"},{"id":"_SETTLE","text":"Settle"},{"id":"_VOLUME","text":"Volume"},{"id":"_PREVIOS","text":"Previous"}];
+				var listMeasures = new JSONModel(measures);
+				this._oDialog.setModel(listMeasures);
+				
+			
+			}
+			// Remember selections if required
+			var bRemember = !!oEvent.getSource().data("remember");
+			this._oDialog.setRememberSelections(bRemember);
 
+			// clear the old search filter
+			this._oDialog.getBinding("items").filter([]);
+			// toggle compact style
+			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
+			this._oDialog.open();
+			
+		},
+		handleCloseMeasureDialog: function(oEvent) {
+					var myController = this;
+			var aContexts = oEvent.getParameter("selectedContexts");
+			if (aContexts && aContexts.length) {
+				
+			var measureKey = aContexts.map(function(oContext) { return oContext.getObject().id; });
+			var measureText = aContexts.map(function(oContext) { return oContext.getObject().text; });
+		
+				myController.onKeyFigureSelect(measureKey,myController);
+				MessageToast.show("You have chosen " + measureText);
+			} else {
+				MessageToast.show("No new item was selected.");
+			}
+			
+		},
+		handleSelectCommodityDialogPress: function (oEvent) {
+			var dialog = this._oDialog;
+				if (this._oDialog) {
+				this._oDialog.destroy();
+				this._oDialog = undefined;
+			}
+			if (!this._oDialog) {
+				this._oDialog = sap.ui.xmlfragment("quandlApp.view.Dialog", this);
+				var commodities = [{"id":"Corn","text":"Corn"},{"id":"Soy","text":"Soy"}];
+				var listCommodities = new JSONModel(commodities);
+				this._oDialog.setModel(listCommodities);
+				
+			
+			}
+			// Remember selections if required
+			var bRemember = !!oEvent.getSource().data("remember");
+			this._oDialog.setRememberSelections(bRemember);
+
+			// clear the old search filter
+			this._oDialog.getBinding("items").filter([]);
+			// toggle compact style
+			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
+			this._oDialog.open();
+		},
+		handleCloseCommodityDialog: function(oEvent) {
+					var myController = this;
+			var aContexts = oEvent.getParameter("selectedContexts");
+			if (aContexts && aContexts.length) {
+				
+			var DataSetKey = aContexts.map(function(oContext) { return oContext.getObject().text; });
+			myController.onDatasetSelected(DataSetKey,myController);
+
+				MessageToast.show("You have chosen " + aContexts.map(function(oContext) { return oContext.getObject().text; }).join(", "));
+			} else {
+				MessageToast.show("No new item was selected.");
+			}
+			
+		}
 	});
 });
