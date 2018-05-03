@@ -1,0 +1,7 @@
+COLUMN TABLE  "HANA_2_SPS1.db.data::quandleUrl"(
+	"_PRODUCT" nvarchar(20),
+	"_URL" nvarchar(500),
+	PRIMARY KEY (
+		"_PRODUCT"
+	)
+) UNLOAD PRIORITY 5 AUTO MERGE;

@@ -4,13 +4,16 @@ var request = require("request");
 var https = require("https");
 var xsenv = require("@sap/xsenv");
 var moment = require("moment");
+
 //var async = require("async");
 
 /*
  *	return max date from table in order to do delta update
  *	result format {maxDate: 01-01-2018}
  */
-exports.getTopDateFromTable = function(client, tblName) {
+exports.getTopDateFromTable = function(client, tblName,callback) {
+	
+
 	client.prepare(
 		"SELECT MAX (_DATE) as \"maxDate\" FROM " + tblName,
 		function(err, statement) {
@@ -18,7 +21,7 @@ exports.getTopDateFromTable = function(client, tblName) {
 				var error = {
 					"error": err.toString()
 				};
-				return error;
+				callback(error);
 			}
 			statement.exec([],
 				function(err, results) {
@@ -26,14 +29,14 @@ exports.getTopDateFromTable = function(client, tblName) {
 						var error = {
 							"error": err.toString()
 						};
-						return error;
+						callback(error);
 
 					} else {
 						var result = {
 							"maxDate": results[0].maxDate
 						};
 						//console.log(result);
-						return result;
+						callback(result,callback);
 					}
 				});
 
@@ -43,7 +46,7 @@ exports.getTopDateFromTable = function(client, tblName) {
 /*
  *	return all values from table in JSON FORMAT
  */
-exports.getAllValuesFromTable = function(client, tblName) {
+exports.getAllValuesFromTable = function(client, tblName,callback) {
 
 	client.prepare(
 		"SELECT * FROM " + tblName,
@@ -52,7 +55,7 @@ exports.getAllValuesFromTable = function(client, tblName) {
 				var error = {
 					"error": err.toString()
 				};
-				return error;
+			callback(error);
 			}
 			statement.exec([],
 				function(err, results) {
@@ -60,7 +63,7 @@ exports.getAllValuesFromTable = function(client, tblName) {
 						var error = {
 							"error": err.toString()
 						};
-						return error;
+							callback(error);
 
 					} else {
 						var myRes = results;
@@ -68,7 +71,7 @@ exports.getAllValuesFromTable = function(client, tblName) {
 							Objects: results
 						};
 						//console.log(result);
-						return result;
+						callback(result);
 					}
 				});
 		});
@@ -76,7 +79,7 @@ exports.getAllValuesFromTable = function(client, tblName) {
 /*
  *	insert to table. if date exists update record
  */
-exports.insertToTable = function(client, product, tblName, valuesArr) {
+exports.insertToTable = function(client, product, tblName, valuesArr,callback) {
 
 		var arr = [];
 		arr = valuesArr;
@@ -92,27 +95,27 @@ exports.insertToTable = function(client, product, tblName, valuesArr) {
 					var error = {
 						"error": err.toString()
 					};
-					return error;
+					callback(error);
 				}
 				statement.exec(arr, function(err, results) {
 					if (err) {
 						var error = {
 							"error": err.toString()
 						};
-						return error;
+					callback(error);
 
 					} else {
 						var result = {
 							Objects: results
 						};
 						//console.log(result);
-						return result;
+						callback(result);
 					}
 				});
 			});
 };
 
-exports.getDataFromQuandl = function(quandlPath){
+exports.getDataFromQuandl = function(quandlPath,callback){
 	
 var agentOptions;
 var agent;
@@ -135,11 +138,11 @@ request({
 			console.log("OK STATUSSSSSSSSSSSSSSSSSSS");
 			var obj = JSON.parse(body);
 			
-			return obj.dataset; //the data is in obj.dataset.data
+			callback(obj.dataset); //the data is in obj.dataset.data
 			}
 			else {
 					var err = {"error" : error.toString()};
-					return err;
+					callback(err);
 			}
 		});
 };
