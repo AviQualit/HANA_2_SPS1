@@ -8,18 +8,19 @@ sap.ui.define([
 
 	return Controller.extend("quandlApp.controller.App", {
 		onInit: function() {
-		
+			var myController = this;
 			var view = this.getView();
 			var myController = this;
 			$.ajax({
 				type: 'get',
-				url: '/node/example1',
+				url: '/node/select/product?productId=corn',
 				success: function(data) {
 					//build model
-					var oModel = new JSONModel(data.Objects);
+					myController.buildTable(myController,data);
+					//var oModel = new JSONModel(data.Objects);
 					//bind model to table
-					view.byId("productTable").setModel(oModel);
-					view.byId("productTable").bindRows("/");
+					//view.byId("productTable").setModel(oModel);
+					//	view.byId("productTable").bindRows("/");
 					var dates = data.Objects.map(function(value) {
 						return value._DATE;
 					});
@@ -29,7 +30,7 @@ sap.ui.define([
 					var lineChartData = {
 						labels: dates,
 						datasets: [{
-							label: "_LAST",
+							label: "LAST",
 							fill: false,
 							lineTension: 0.1,
 							backgroundColor: "rgba(75,192,192,0.4)",
@@ -55,26 +56,21 @@ sap.ui.define([
 					view.byId("productChart").setModel(new JSONModel({
 						lineChart: lineChartData
 					}), "temp");
-					myController.setTheLatestDataLabels("Corn",myController,view.byId("productChart").getModel("temp").oData.lineChart.datasets[0].label);
+					
+					myController.setTheLatestDataLabels(myController,"_"+view.byId("productChart").getModel("temp").oData.lineChart.datasets[0].label);
 				}
 			});
 		},
 		onDatasetSelected: function(dataset, controller) {
+			
 			var view = controller.getView();
+			//remove all coloumns from table  current table
+			view.byId("productTable").removeAllColumns();
 			var myController = controller;
 			var DataSetKey = dataset[0];
 			var url = "";
-
-			switch (DataSetKey) {
-				case "Corn":
-					url = "/node/example1";
-					break;
-				case "Soy":
-					url = "/node/select/soy";
-					break;
-				default:
-					url = "/node/example1";
-			}
+			//create http url with productId parameter
+			url = "/node/select/product?productId="+DataSetKey.toLowerCase();
 
 			$.ajax({
 				type: 'get',
@@ -82,19 +78,45 @@ sap.ui.define([
 				success: function(data) {
 					//build model
 					//bind model to table
-					view.byId("productTable").getModel().setData(data.Objects);
-					view.byId("productTable").getModel().refresh();
-					
+					//var productNameCustomData = new sap.ui.core.CustomData({key:DataSetKey});
+				
+					myController.buildTable(myController,data);
+					//view.byId("productTable").refresh();
 					//find current key figure
 					var currKeyFigue = view.byId("productChart").getModel("temp").oData.lineChart.datasets[0].label;
+					//if key figure does not exists choose the first one from the table
+					var currentKeyToCheck = currKeyFigue;
+					var currModel = view.byId("productTable").getModel().oData[0];
+					var containKeyFigure = false;
+					
+						for (var key in currModel) {
+    						if (currModel.hasOwnProperty(key)) {
+        							var coloumnName = key.slice(0, key.length);
+    							if(coloumnName.toString() === currentKeyToCheck.toString()){
+    								containKeyFigure =true;
+    								break;
+    							}
+    						}
+						}
+						//if need to get different key figure
+						if(!containKeyFigure){
+								for (var key in currModel) {
+    						if (currModel.hasOwnProperty(key)) {
+        							var coloumnName = key.slice(0, key.length);
+    							if(coloumnName.toString() !=="_DATE" && coloumnName.toString() !=="_PRODUCT"){
+    								 currKeyFigue = coloumnName;
+    								break;
+    							}
+    						}
+						}
+						}
+    							
+					
 					//bind the model to chart by using key figure select function
 					myController.onKeyFigureSelect(currKeyFigue,myController);
-					
-					//bind the model to text 
-					myController.setTheLatestDataLabels(DataSetKey,myController, currKeyFigue);
-					
 				}
 			});
+			
 		},
 		getSoy: function(oEvent) {
 			var view = this.getView();
@@ -109,12 +131,41 @@ sap.ui.define([
 				}
 			});
 		},
+		buildTable: function(mycontroller, dataModel){
+			var view = mycontroller.getView();
+			var oTable = view.byId("productTable");
+			//create coloumns by going over the keys of first data in the array
+			for (var key in dataModel.Objects[0]) {
+    	if (dataModel.Objects[0].hasOwnProperty(key)) {
+        var coloumnName = key.slice(0, key.length);
+        oTable.addColumn(new sap.ui.table.Column({
+		label: new sap.m.Label({text: coloumnName}),
+		template: new sap.m.Text({text: "{"+coloumnName+"}"}),
+		/*template: new sap.ui.commons.Text().bindProperty("value", coloumnName),*/
+		sortProperty: coloumnName,
+		filterProperty: coloumnName
+/*
+oTable.addColumn(new sap.ui.table.Column({
+    label: new sap.ui.commons.Label({text: "First Name"}), 
+    template: new sap.ui.commons.TextField({value: "{name}"})
+  }));
+*/
+  }));
+    }
+}				//bind to model
+				var oModel = new JSONModel(dataModel.Objects);
+					//bind model to table
+					view.byId("productTable").setModel(oModel);
+					view.byId("productTable").bindRows("/");
+				
+		},
 		onKeyFigureSelect: function(keyFigure, controller) {
 			var view = controller.getView();
 			var myController = controller;
 			
 		
 			var lineValues = view.byId("productTable").getModel().oData;
+		
 			var valuesArr = [];
 								var dates = lineValues.map(function(value) {
 						return value._DATE;
@@ -127,7 +178,7 @@ sap.ui.define([
 					var lineChartData = {
 						labels: dates,
 						datasets: [{
-							label: keyFigure,
+							label: keyFigure.toString().slice(1,keyFigure.lenth),
 							fill: false,
 							lineTension: 0.1,
 							backgroundColor: "rgba(75,192,192,0.4)",
@@ -156,7 +207,7 @@ sap.ui.define([
 						lineChart: lineChartData
 					}), "temp");
 		view.byId("productChart").getModel("temp").refresh();
-			//myController.setTheLatestDataLabels(myController, keyFigure);
+			myController.setTheLatestDataLabels(myController, keyFigure);
 	//	sap.ui.getCore().byId("productChart").rerender();
 
 		},
@@ -194,8 +245,10 @@ sap.ui.define([
 			});
 			return newArr;
 		},
-		setTheLatestDataLabels: function(dataSetName,myController, newMeasure ){
+		setTheLatestDataLabels: function(myController, newMeasure ){
 			var view = myController.getView();
+			
+			var dataSetName = view.byId("productTable").getModel().oData[0]._PRODUCT;
 			var lineValues = view.byId("productTable").getModel().oData;
 			var sortedvalues  = myController.copyAndSortJsonArray(lineValues);
 			view.byId("labelCurrentValue").setText("new current value");
@@ -204,7 +257,7 @@ sap.ui.define([
 			//get the selected measure from chart
 			var selectedMeasure;
 			if (newMeasure === null){
-			 selectedMeasure = view.byId("productChart").getModel("temp").oData.lineChart.datasets[0].label;
+			 selectedMeasure = "_"+view.byId("productChart").getModel("temp").oData.lineChart.datasets[0].label;
 			}
 			 else {
 			 selectedMeasure = newMeasure;
@@ -252,7 +305,24 @@ sap.ui.define([
 			}
 			if (!this._oDialog) {
 				this._oDialog = sap.ui.xmlfragment("quandlApp.view.MeasureSelect", this);
-				var measures = [{"id":"_LAST","text":"Last"},{"id":"_OPEN","text":"Open"},{"id":"_HIGH","text":"High"},{"id":"_LOW","text":"Low"},{"id":"_CHANGE","text":"Change"},{"id":"_SETTLE","text":"Settle"},{"id":"_VOLUME","text":"Volume"},{"id":"_PREVIOS","text":"Previous"}];
+				//get measures from the the model
+				var measures = [];
+					
+					//build measure list
+					var measuresData  = this.getView().byId("productTable").getModel().oData[0];
+						for (var key in measuresData) {
+    						if (measuresData.hasOwnProperty(key)) {
+        					var coloumnName = key.slice(0, key.length);
+        						if (coloumnName!=="_DATE" && coloumnName!=="_PRODUCT"){
+        							var currentMeasue = {"id":coloumnName, "text":coloumnName.slice(1,coloumnName.length) };
+        							measures.push(currentMeasue);
+        						}
+        					
+								
+    						}
+						}
+					
+				///var measures = [{"id":"_LAST","text":"Last"},{"id":"_OPEN","text":"Open"},{"id":"_HIGH","text":"High"},{"id":"_LOW","text":"Low"},{"id":"_CHANGE","text":"Change"},{"id":"_SETTLE","text":"Settle"},{"id":"_VOLUME","text":"Volume"},{"id":"_PREVIOS","text":"Previous"}];
 				var listMeasures = new JSONModel(measures);
 				this._oDialog.setModel(listMeasures);
 				
@@ -292,7 +362,7 @@ sap.ui.define([
 			}
 			if (!this._oDialog) {
 				this._oDialog = sap.ui.xmlfragment("quandlApp.view.Dialog", this);
-				var commodities = [{"id":"Corn","text":"Corn"},{"id":"Soy","text":"Soy"}];
+				var commodities = [{"id":"Corn","text":"Corn"},{"id":"Soy","text":"Soy"},{"id":"Sugar","text":"Sugar"},{"id":"Cotton","text":"Cotton"},{"id":"Wheat","text":"Wheat"},{"id":"Milk","text":"Milk"}];
 				var listCommodities = new JSONModel(commodities);
 				this._oDialog.setModel(listCommodities);
 				

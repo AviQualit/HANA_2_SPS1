@@ -57,68 +57,7 @@
 						
 						<Panel  visible="false" hight="50%" width="40%" class="sapUiResponsiveMargin">
 															<table:Table id="productTable" visibleRowCount="7" minAutoRowCount="5" visibleRowCountMode="Auto" SelectionMode="None">
-								<table:columns>
-									<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_PRODUCT" filterProperty="_PRODUCT">
-										<Label text="_PRODUCT"/>
-										<table:template>
-											<Text text="{_PRODUCT}"></Text>
-										</table:template>
-									</table:Column>
-									<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_DATE" filterProperty="_DATE">
-										<Label text="Date"/>
-										<table:template>
-											<Text text="{_DATE}"></Text>
-										</table:template>
-									</table:Column>
-									<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_OPEN" filterProperty="_OPEN">
-										<Label text="_OPEN"/>
-										<table:template>
-											<Text text="{_OPEN}"></Text>
-										</table:template>
-									</table:Column>
-									<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_HIGH" filterProperty="_HIGH">
-										<Label text="_HIGH"/>
-										<table:template>
-											<Text text="{_HIGH}"></Text>
-										</table:template>
-									</table:Column>
-									<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_LOW" filterProperty="_LOW">
-										<Label text="_LOW"/>
-										<table:template>
-											<Text text="{_LOW}"></Text>
-										</table:template>
-									</table:Column>
-									<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_LAST" filterProperty="_LAST">
-										<Label text="_LAST"/>
-										<table:template>
-											<Text text="{_LAST}"></Text>
-										</table:template>
-									</table:Column>
-									<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_CHANGE" filterProperty="_CHANGE">
-										<Label text="_CHANGE"/>
-										<table:template>
-											<Text text="{_CHANGE}"></Text>
-										</table:template>
-									</table:Column>
-									<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_SETTLE" filterProperty="_SETTLE">
-										<Label text="_SETTLE"/>
-										<table:template>
-											<Text text="{_SETTLE}"></Text>
-										</table:template>
-									</table:Column>
-									<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_VOLUME" filterProperty="_VOLUME">
-										<Label text="_VOLUME"/>
-										<table:template>
-											<Text text="{_VOLUME}"></Text>
-										</table:template>
-									</table:Column>
-									<table:Column width="auto" resizable="true" autoResizable="true" flexible="true" sortProperty="_PREVIOS" filterProperty="_PREVIOS">
-										<Label text="_PREVIOS"/>
-										<table:template>
-											<Text text="{_PREVIOS}"></Text>
-										</table:template>
-									</table:Column>
-								</table:columns>
+    														
 							</table:Table>
 						</Panel>
 					</l:HorizontalLayout>

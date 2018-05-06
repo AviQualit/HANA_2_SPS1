@@ -211,6 +211,38 @@ client.prepare(
 		});
 	});
 });
+/*
+*get product - use http header parameter productId
+*/
+app.get("/select/product", function(req, res) {
+//	console.log(dataAcees.getTopDateFromTable(req.db,"TABLE"));    
+	var product = [];
+	if (req.query.productId !== undefined){
+		product.push(req.query.productId);
+		console.log("example1 start");
+var client = req.db;
+client.prepare(
+	"SELECT * FROM \"HANA2_1\".\"HANA_2_SPS1.db.data::"+product[0]+"\" ORDER BY \"_DATE\" ASC;" ,
+	function(err, statement) {
+		if (err) {			
+			res.type("text/plain").status(500).send("ERROR: " + err.toString());	return;	}
+	statement.exec([],
+		function(err, results) {
+			if (err) {			
+				res.type("text/plain").status(500).send("ERROR: " + err.toString());	return;						
+
+		} else {							
+			var result = JSON.stringify({ Objects: results});					
+			//console.log(result);
+			res.type("application/json").status(200).send(result);
+		}
+		});
+	});
+	}
+	else{
+			res.type("text/html").status(200).send("Missing Commodity Name");
+	}
+});
 //get corn handler
 app.get("/select/soy", function(req, res) {
 var client = req.db;
