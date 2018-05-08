@@ -25,12 +25,12 @@ sap.ui.define([
 						return value._DATE;
 					});
 					var highValues = data.Objects.map(function(value) {
-						return value._LAST;
+						return value._SETTLE;
 					});
 					var lineChartData = {
 						labels: dates,
 						datasets: [{
-							label: "LAST",
+							label: "SETTLE",
 							fill: false,
 							lineTension: 0.1,
 							backgroundColor: "rgba(75,192,192,0.4)",
@@ -83,12 +83,13 @@ sap.ui.define([
 					myController.buildTable(myController,data);
 					//view.byId("productTable").refresh();
 					//find current key figure
-					var currKeyFigue = view.byId("productChart").getModel("temp").oData.lineChart.datasets[0].label;
+					var currKeyFigue = "_"+view.byId("productChart").getModel("temp").oData.lineChart.datasets[0].label.slice(0,view.byId("productChart").getModel("temp").oData.lineChart.datasets[0].label.length);
 					//if key figure does not exists choose the first one from the table
 					var currentKeyToCheck = currKeyFigue;
 					var currModel = view.byId("productTable").getModel().oData[0];
 					var containKeyFigure = false;
 					
+					//check if data set contains current key figure
 						for (var key in currModel) {
     						if (currModel.hasOwnProperty(key)) {
         							var coloumnName = key.slice(0, key.length);
@@ -98,7 +99,7 @@ sap.ui.define([
     							}
     						}
 						}
-						//if need to get different key figure
+						//if data vase does not contian curren key figure select the first one from the list
 						if(!containKeyFigure){
 								for (var key in currModel) {
     						if (currModel.hasOwnProperty(key)) {
@@ -247,13 +248,13 @@ oTable.addColumn(new sap.ui.table.Column({
 		},
 		setTheLatestDataLabels: function(myController, newMeasure ){
 			var view = myController.getView();
-			
-			var dataSetName = view.byId("productTable").getModel().oData[0]._PRODUCT;
+			 var product = view.byId("productTable").getModel().oData[0]._PRODUCT.slice(0);
+			var dataSetName =product.charAt(0).toUpperCase() + product.slice(1);
 			var lineValues = view.byId("productTable").getModel().oData;
 			var sortedvalues  = myController.copyAndSortJsonArray(lineValues);
 			view.byId("labelCurrentValue").setText("new current value");
 			view.byId("commodityTextId").setText(dataSetName);
-			view.byId("lastDate").setText("Database is up to: "+sortedvalues[0]["_DATE"]);
+		
 			//get the selected measure from chart
 			var selectedMeasure;
 			if (newMeasure === null){
@@ -262,11 +263,39 @@ oTable.addColumn(new sap.ui.table.Column({
 			 else {
 			 selectedMeasure = newMeasure;
 			 }
-			var currentValue = sortedvalues[0][selectedMeasure];
+			 var currentValue = null;
+			 var previousValue = null;
+			 var currentValuelocation = 0;
+			 //get the newest not null key figure
+			 for (var i =0; i<sortedvalues.length; i++){
+			 	//get first 
+			 	if (currentValue === null ){
+			 		if (sortedvalues[i][selectedMeasure] !== null){
+			 			currentValue = sortedvalues[i][selectedMeasure];
+			 			currentValuelocation = i;
+			 			break;
+			 		}
+			 	}
+			 	
+			 }
+			 //get the first not null previous value
+			 	for (var j = currentValuelocation+1; j<sortedvalues.length; j++){
+			 	//get first 
+			 	if (previousValue === null ){
+			 		if (sortedvalues[j][selectedMeasure] !== null){
+			 			previousValue = sortedvalues[j][selectedMeasure];
+			 			break;
+			 		}
+			 	}
+			 	
+			 }
+			 	
+			 
+			view.byId("lastDate").setText("Measure last Update: "+sortedvalues[currentValuelocation]["_DATE"]);
 				view.byId("labelCurrentValue").setText(currentValue.toString());
-			var previousValue = sortedvalues[1][selectedMeasure];
+		
 			var difference = currentValue - previousValue;
-			view.byId("changeFromPreviousValue").setText(difference.toString());
+			view.byId("changeFromPreviousValue").setText(difference.toFixed(2).toString());
 			//color red if smaller then 0
 			if (difference < 0){
 			

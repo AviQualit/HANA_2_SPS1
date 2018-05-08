@@ -5,7 +5,7 @@
 		<pages>
 			<Page showHeader="false"  enableScrolling="true" class="sapUiResponsiveContentPadding">
 				<content>
-					<HBox class="sapUiContentPadding" width="100%">
+					<HBox class="sapUiContentPadding headerBox" width="100%">
 					<Text id="commodityTextId" text="Soy" class="sapUiResponsiveMargin commodityName" />
 					<Button
 					icon="sap-icon://sys-add"
@@ -33,7 +33,7 @@
 								</Text>
 								<Text id="changeFromPreviousValue" class="valueLabelPositiveOption sapUiTinyMarginEnd" displayOnly="true" wrapping="true" text="changeFromPreviousValue ">
 									<layoutData>
-										<FlexItemData growFactor="0"/>
+										<FlexItemData   growFactor="0"/>
 									</layoutData>
 								</Text>
 								<Text id="changeFromPreviousPercent" displayOnly="true" wrapping="true" text="changeFromPreviousPercent " >
